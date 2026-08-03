@@ -4,7 +4,8 @@
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
-<head>
+<html>
+	<head>
 		<title>Loving Education</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -22,6 +23,7 @@
 					<header id="header" class="alt">
 						<h1><a href="index.html">Loving Education</a></h1>
 						<nav>
+							<a href="#" id="lang-toggle" onclick="toggleLanguage(); return false;" data-en="සිං" data-si="EN">සිං</a>
 							<a href="#menu">Menu</a>
 						</nav>
 					</header>
@@ -59,7 +61,7 @@
 									<a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
 									<div class="content">
 										<h2 class="major">-What is Loving Education</h2>
-										<p>Loving Education helps students build strong, well rounded foundations in general knowledge ~ taught with patience, encouragement, and genuine care.</p>
+										<p data-en="Loving Education helps students build strong, well rounded foundations in general knowledge ~ taught with patience, encouragement, and genuine care." data-si="Loving Education ශිෂ්‍යයන්ට සාමාන්‍ය දැනුමේ ශක්තිමත් හා පුළුල් පදනමක් ගොඩනගා ගැනීමට උපකාර කරයි ~ ඉවසීමෙන්, දිරිගැන්වීමෙන් සහ අව්‍යාජ සැලකිල්ලෙන් උගන්වනු ලැබේ.">Loving Education helps students build strong, well rounded foundations in general knowledge ~ taught with patience, encouragement, and genuine care.</p>
 										<a href="#" class="special">Learn more</a>
 									</div>
 								</div>
@@ -71,7 +73,7 @@
 									<a href="#" class="image"><img src="images/pic02.jpg" alt="" /></a>
 									<div class="content">
 										<h2 class="major">meet the founder</h2>
-										<p>Vidyadhi Hansana, The founder of Loving Education and the Manager, Been developing the Loving Education institution for 3+ Years</p>
+										<p data-en="Vidyadhi Hansana, The founder of Loving Education and the Manager, Been developing the Loving Education institution for 3+ Years" data-si="විද්‍යාධි හංසන, Loving Education ආයතනයේ ආරම්භකයා සහ කළමනාකරු, වසර 3කට වැඩි කාලයක් තිස්සේ Loving Education ආයතනය සංවර්ධනය කරමින් සිටී.">Vidyadhi Hansana, The founder of Loving Education and the Manager, Been developing the Loving Education institution for 3+ Years</p>
 										<a href="#" class="special">Learn more</a>
 									</div>
 								</div>
@@ -83,7 +85,7 @@
 									<a href="#" class="image"><img src="images/pic03.jpg" alt="" /></a>
 									<div class="content">
 										<h2 class="major">How to join us</h2>
-										<p>You can join us through different sites simply by clicking on any of the following links</p>
+										<p data-en="You can join us through different sites simply by clicking on any of the following links" data-si="පහත ඕනෑම සබැඳියක් ක්ලික් කිරීමෙන් ඔබට විවිධ අඩවි හරහා අප හා එකතු විය හැක">You can join us through different sites simply by clicking on any of the following links</p>
 										<a href="#" class="special">Learn more</a>
 									</div>
 								</div>
@@ -179,6 +181,30 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+
+		<!-- Language toggle -->
+			<script>
+				function setLanguage(lang) {
+					document.querySelectorAll('[data-en]').forEach(function(el) {
+						var text = (lang === 'si') ? el.getAttribute('data-si') : el.getAttribute('data-en');
+						if (el.tagName === 'INPUT') {
+							el.value = text;
+						} else {
+							el.textContent = text;
+						}
+					});
+					localStorage.setItem('loving-education-lang', lang);
+				}
+
+				function toggleLanguage() {
+					var current = localStorage.getItem('loving-education-lang') || 'en';
+					setLanguage(current === 'en' ? 'si' : 'en');
+				}
+
+				document.addEventListener('DOMContentLoaded', function() {
+					setLanguage(localStorage.getItem('loving-education-lang') || 'en');
+				});
+			</script>
 
 	</body>
 </html>
