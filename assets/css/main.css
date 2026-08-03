@@ -4154,3 +4154,12 @@ input, select, textarea {
 		}
 
 	}
+/* "Loving Education" text — green to yellow gradient */
+#header h1 a,
+#banner h2 {
+	background: linear-gradient(90deg, #2ca956, #68c22d, #dfbf3e);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+}
