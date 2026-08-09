@@ -3411,6 +3411,18 @@ input, select, textarea {
 				width: 2.25em;
 			}
 
+			#banner .logo .logo-icon {
+				border-radius: 100%;
+				border: solid 2px rgba(255, 255, 255, 0.125);
+				box-sizing: border-box;
+				color: #ffffff;
+				cursor: default;
+				display: inline-block;
+				height: 2.25em;
+				padding: 0.6em;
+				width: 2.25em;
+			}
+
 		#banner h2 {
 			-moz-transition: opacity 0.5s ease, -moz-transform 0.5s ease, -moz-filter 0.25s ease;
 			-webkit-transition: opacity 0.5s ease, -webkit-transform 0.5s ease, -webkit-filter 0.25s ease;
@@ -3502,6 +3514,11 @@ input, select, textarea {
 
 					#banner .logo .icon {
 						font-size: 1.5em;
+					}
+
+					#banner .logo .logo-icon {
+						height: 1.75em;
+						width: 1.75em;
 					}
 
 				#banner h2 {
@@ -3801,6 +3818,7 @@ input, select, textarea {
 				border-radius: 100%;
 				margin: 0 3em 2em 0;
 				width: 22em;
+				height: 22em;
 				overflow: hidden;
 				-ms-flex: 1;
 			}
@@ -3808,6 +3826,8 @@ input, select, textarea {
 				.wrapper.spotlight .image img {
 					border-radius: 100%;
 					width: 100%;
+					height: 100%;
+					object-fit: cover;
 				}
 
 			.wrapper.spotlight .content {
@@ -3934,6 +3954,7 @@ input, select, textarea {
 				.wrapper.spotlight .image {
 					margin: 0 2em 2em 0;
 					width: 32em;
+					height: 32em;
 				}
 
 				.wrapper.spotlight:nth-child(2n - 1) .image {
@@ -3974,6 +3995,7 @@ input, select, textarea {
 
 				.wrapper.spotlight .image {
 					width: 19em;
+					height: 19em;
 					margin: 0 1.75em 2em 0;
 				}
 
@@ -3993,6 +4015,7 @@ input, select, textarea {
 				margin: 0 0 1em 0 !important;
 				max-width: 85%;
 				width: 12em;
+				height: 12em;
 			}
 
 		}
