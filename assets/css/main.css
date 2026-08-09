@@ -3817,8 +3817,8 @@ input, select, textarea {
 			.wrapper.spotlight .image {
 				border-radius: 100%;
 				margin: 0 3em 2em 0;
-				width: 22em;
-				height: 22em;
+				width: 18em;
+				height: 18em;
 				overflow: hidden;
 				-ms-flex: 1;
 			}
@@ -3953,8 +3953,8 @@ input, select, textarea {
 
 				.wrapper.spotlight .image {
 					margin: 0 2em 2em 0;
-					width: 32em;
-					height: 32em;
+					width: 26em;
+					height: 26em;
 				}
 
 				.wrapper.spotlight:nth-child(2n - 1) .image {
@@ -3994,8 +3994,8 @@ input, select, textarea {
 				}
 
 				.wrapper.spotlight .image {
-					width: 19em;
-					height: 19em;
+					width: 16em;
+					height: 16em;
 					margin: 0 1.75em 2em 0;
 				}
 
@@ -4014,8 +4014,8 @@ input, select, textarea {
 			.wrapper.spotlight .image {
 				margin: 0 0 1em 0 !important;
 				max-width: 85%;
-				width: 12em;
-				height: 12em;
+				width: 10em;
+				height: 10em;
 			}
 
 		}
