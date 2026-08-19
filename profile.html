@@ -1,1 +1,335 @@
+<!DOCTYPE HTML>
+<!--
+    Solid State by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+    <head>
+        <title>Profile - Loving Education</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="icon" type="image/png" href="images/favicon.png" />
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    </head>
+    <body class="is-preload">
 
+        <!-- Page Wrapper -->
+            <div id="page-wrapper">
+
+                <!-- Header -->
+                    <header id="header">
+                        <h1><a href="index.html">Loving Education</a></h1>
+                        <nav>
+                            <a href="generic.html" class="button">Start Learning</a>
+                            <a href="#menu">Menu</a>
+                        </nav>
+                    </header>
+
+                <!-- Menu -->
+                    <nav id="menu">
+                        <div class="inner">
+                            <h2>Menu</h2>
+                            <ul class="links">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="generic.html">Learn</a></li>
+                                <li><a href="auth.html?mode=login">Log In</a></li>
+                                <li><a href="auth.html?mode=signup">Sign Up</a></li>
+                                <li><a href="profile.html">Profile</a></li>
+                            </ul>
+                            <a href="#" class="close">Close</a>
+                        </div>
+                    </nav>
+
+                <!-- Wrapper -->
+                    <section id="wrapper">
+                        <header>
+                            <div class="inner">
+                                <h2>Profile</h2>
+                                <p>Manage your account</p>
+                            </div>
+                        </header>
+
+                        <div class="wrapper">
+                            <div class="inner">
+
+                                <!-- Not logged in -->
+                                    <div id="not-logged-in" style="display:none; text-align:center; padding:3em 0;">
+                                        <p>You are not logged in.</p>
+                                        <br />
+                                        <ul class="actions special">
+                                            <li><a href="auth.html?mode=login" class="button primary">Log In</a></li>
+                                            <li><a href="auth.html?mode=signup" class="button">Sign Up</a></li>
+                                        </ul>
+                                    </div>
+
+                                <!-- Logged in -->
+                                    <div id="logged-in" style="display:none;">
+
+                                        <!-- Profile Picture -->
+                                            <h3 class="major">Profile Picture</h3>
+                                            <div style="text-align:center; margin-bottom:2em;">
+                                                <img id="pfp-preview" src="" alt="Profile" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border: solid 2px rgba(255,255,255,0.125); background:rgba(255,255,255,0.025);" />
+                                                <br /><br />
+                                                <label for="pfp-input" class="button" style="cursor:pointer;">Change Picture</label>
+                                                <input type="file" id="pfp-input" accept="image/*" style="display:none;" onchange="handlePfpChange(event)" />
+                                            </div>
+
+                                        <!-- Change Name -->
+                                            <h3 class="major">Change Name</h3>
+                                            <form onsubmit="return handleChangeName(event)">
+                                                <div class="fields">
+                                                    <div class="field">
+                                                        <label for="new-name">New Name</label>
+                                                        <input type="text" name="new-name" id="new-name" required />
+                                                    </div>
+                                                </div>
+                                                <ul class="actions">
+                                                    <li><input type="submit" value="Save Name" class="primary" /></li>
+                                                </ul>
+                                            </form>
+
+                                        <!-- Change Password -->
+                                            <h3 class="major">Change Password</h3>
+                                            <form onsubmit="return handleChangePassword(event)">
+                                                <div class="fields">
+                                                    <div class="field">
+                                                        <label for="current-pass">Current Password</label>
+                                                        <input type="password" name="current-pass" id="current-pass" required />
+                                                    </div>
+                                                    <div class="field">
+                                                        <label for="new-pass">New Password</label>
+                                                        <input type="password" name="new-pass" id="new-pass" required />
+                                                    </div>
+                                                </div>
+                                                <ul class="actions">
+                                                    <li><input type="submit" value="Change Password" class="primary" /></li>
+                                                </ul>
+                                            </form>
+
+                                        <!-- Account Info -->
+                                            <h3 class="major">Account Info</h3>
+                                            <div class="box">
+                                                <p><strong>Name:</strong> <span id="info-name"></span></p>
+                                                <p><strong>Role:</strong> <span id="info-role"></span></p>
+                                            </div>
+
+                                        <!-- Log Out -->
+                                            <br />
+                                            <ul class="actions">
+                                                <li><a href="#" class="button" onclick="logOut(); return false;">Log Out</a></li>
+                                            </ul>
+
+                                    </div>
+
+                            </div>
+                        </div>
+                    </section>
+
+                <!-- Footer -->
+                    <section id="footer">
+                        <div class="inner">
+                            <h2 class="major">Get in touch</h2>
+                            <p>CONTACT 071 999 1465 for more INFO</p>
+                            <ul class="contact">
+                                <li class="icon solid fa-phone">071 999 1465</li>
+                            </ul>
+                            <ul class="copyright">
+                                <li>&copy; Loving Education. All rights reserved.</li>
+                            </ul>
+                        </div>
+                    </section>
+
+            </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/jquery.min.js"></script>
+            <script src="assets/js/jquery.scrollex.min.js"></script>
+            <script src="assets/js/browser.min.js"></script>
+            <script src="assets/js/breakpoints.min.js"></script>
+            <script src="assets/js/util.js"></script>
+            <script src="assets/js/main.js"></script>
+
+        <!-- Profile logic -->
+            <script>
+                var currentUser = null;
+                var users = {};
+
+                function getUsers() {
+                    return JSON.parse(localStorage.getItem('le-users') || '{}');
+                }
+
+                function saveUsers(u) {
+                    localStorage.setItem('le-users', JSON.stringify(u));
+                }
+
+                function loadProfile() {
+                    currentUser = localStorage.getItem('le-currentUser');
+                    if (!currentUser) {
+                        document.getElementById('not-logged-in').style.display = 'block';
+                        document.getElementById('logged-in').style.display = 'none';
+                        return;
+                    }
+
+                    users = getUsers();
+                    if (!users[currentUser]) {
+                        localStorage.removeItem('le-currentUser');
+                        document.getElementById('not-logged-in').style.display = 'block';
+                        document.getElementById('logged-in').style.display = 'none';
+                        return;
+                    }
+
+                    document.getElementById('not-logged-in').style.display = 'none';
+                    document.getElementById('logged-in').style.display = 'block';
+
+                    var user = users[currentUser];
+
+                    if (user.pfp) {
+                        document.getElementById('pfp-preview').src = user.pfp;
+                    } else {
+                        document.getElementById('pfp-preview').src = 'data:image/svg+xml;charset=utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="#353849"/><text x="60" y="70" text-anchor="middle" fill="white" font-size="40" font-family="sans-serif">' + currentUser.charAt(0).toUpperCase() + '</text></svg>');
+                    }
+
+                    document.getElementById('new-name').value = user.name;
+                    document.getElementById('info-name').textContent = user.name;
+                    document.getElementById('info-role').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+                }
+
+                function handlePfpChange(e) {
+                    var file = e.target.files[0];
+                    if (!file) return;
+
+                    if (file.size > 2 * 1024 * 1024) {
+                        showNotify('Image too large. Max 2MB.');
+                        return;
+                    }
+
+                    var reader = new FileReader();
+                    reader.onload = function(ev) {
+                        var img = new Image();
+                        img.onload = function() {
+                            var canvas = document.createElement('canvas');
+                            var size = 200;
+                            canvas.width = size;
+                            canvas.height = size;
+                            var ctx = canvas.getContext('2d');
+                            var min = Math.min(img.width, img.height);
+                            var sx = (img.width - min) / 2;
+                            var sy = (img.height - min) / 2;
+                            ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+                            var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                            users = getUsers();
+                            if (users[currentUser]) {
+                                users[currentUser].pfp = dataUrl;
+                                saveUsers(users);
+                                document.getElementById('pfp-preview').src = dataUrl;
+                                showNotify('Profile picture updated');
+                            }
+                        };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                function handleChangeName(e) {
+                    e.preventDefault();
+                    var newName = document.getElementById('new-name').value.trim();
+                    if (!newName) {
+                        showNotify('Name cannot be empty');
+                        return false;
+                    }
+
+                    users = getUsers();
+                    if (newName !== currentUser && users[newName]) {
+                        showNotify('That name is already taken');
+                        return false;
+                    }
+
+                    var oldName = currentUser;
+                    users[newName] = users[oldName];
+                    users[newName].name = newName;
+                    if (newName !== oldName) delete users[oldName];
+                    saveUsers(users);
+                    localStorage.setItem('le-currentUser', newName);
+                    currentUser = newName;
+                    document.getElementById('info-name').textContent = newName;
+                    showNotify('Name updated to ' + newName);
+                    return false;
+                }
+
+                function handleChangePassword(e) {
+                    e.preventDefault();
+                    var currentPass = document.getElementById('current-pass').value;
+                    var newPass = document.getElementById('new-pass').value;
+
+                    users = getUsers();
+                    if (!users[currentUser]) {
+                        showNotify('Something went wrong');
+                        return false;
+                    }
+
+                    if (users[currentUser].password !== currentPass) {
+                        showNotify('Current password is wrong');
+                        return false;
+                    }
+
+                    if (!newPass) {
+                        showNotify('New password cannot be empty');
+                        return false;
+                    }
+
+                    users[currentUser].password = newPass;
+                    saveUsers(users);
+                    document.getElementById('current-pass').value = '';
+                    document.getElementById('new-pass').value = '';
+                    showNotify('Password changed');
+                    return false;
+                }
+
+                function logOut() {
+                    localStorage.removeItem('le-currentUser');
+                    window.location.href = 'index.html';
+                }
+
+                document.addEventListener('DOMContentLoaded', loadProfile);
+            </script>
+
+        <!-- Notification popups -->
+            <script>
+                function showNotify(msg, isHTML, redirectURL) {
+                    var old = document.querySelector('.notify-bar');
+                    if (old) old.remove();
+
+                    var bar = document.createElement('div');
+                    bar.className = 'notify-bar';
+                    if (isHTML) {
+                        bar.innerHTML = msg;
+                    } else {
+                        bar.textContent = msg;
+                    }
+                    document.body.appendChild(bar);
+
+                    setTimeout(function() { bar.classList.add('show'); }, 10);
+
+                    bar.onclick = function() { dismissNotify(bar); };
+                    setTimeout(function() { dismissNotify(bar); }, 15000);
+
+                    if (redirectURL) {
+                        setTimeout(function() {
+                            if (bar.parentNode) bar.remove();
+                            window.location.href = redirectURL;
+                        }, 3000);
+                    }
+                }
+
+                function dismissNotify(bar) {
+                    if (!bar || !bar.parentNode) return;
+                    bar.classList.remove('show');
+                    setTimeout(function() { if (bar.parentNode) bar.remove(); }, 400);
+                }
+            </script>
+
+    </body>
+</html>
