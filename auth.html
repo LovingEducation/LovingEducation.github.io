@@ -1,1 +1,278 @@
+<!DOCTYPE HTML>
+<!--
+    Solid State by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+    <head>
+        <title>Account - Loving Education</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="icon" type="image/png" href="images/favicon.png" />
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    </head>
+    <body class="is-preload">
 
+        <!-- Page Wrapper -->
+            <div id="page-wrapper">
+
+                <!-- Header -->
+                    <header id="header">
+                        <h1><a href="index.html">Loving Education</a></h1>
+                        <nav>
+                            <a href="generic.html" class="button">Start Learning</a>
+                            <a href="#menu">Menu</a>
+                        </nav>
+                    </header>
+
+                <!-- Menu -->
+                    <nav id="menu">
+                        <div class="inner">
+                            <h2>Menu</h2>
+                            <ul class="links">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="generic.html">Learn</a></li>
+                                <li><a href="auth.html?mode=login">Log In</a></li>
+                                <li><a href="auth.html?mode=signup">Sign Up</a></li>
+                                <li><a href="profile.html">Profile</a></li>
+                            </ul>
+                            <a href="#" class="close">Close</a>
+                        </div>
+                    </nav>
+
+                <!-- Wrapper -->
+                    <section id="wrapper">
+                        <header>
+                            <div class="inner">
+                                <h2 id="auth-title">Sign Up</h2>
+                                <p id="auth-subtitle">Create your Loving Education account</p>
+                            </div>
+                        </header>
+
+                        <div class="wrapper">
+                            <div class="inner">
+
+                                <!-- Step 1: Name + Password -->
+                                    <div id="step-1" class="auth-step">
+                                        <form onsubmit="return handleStep1(event)">
+                                            <div class="fields">
+                                                <div class="field half">
+                                                    <label for="auth-name">Name</label>
+                                                    <input type="text" name="auth-name" id="auth-name" placeholder="Your name" required />
+                                                </div>
+                                                <div class="field half">
+                                                    <label for="auth-pass">Password</label>
+                                                    <input type="password" name="auth-pass" id="auth-pass" placeholder="Your password" required />
+                                                </div>
+                                            </div>
+                                            <ul class="actions">
+                                                <li><input type="submit" value="Enter" class="primary" /></li>
+                                            </ul>
+                                        </form>
+                                    </div>
+
+                                <!-- Step 2: Admin or Student (signup only) -->
+                                    <div id="step-2" class="auth-step" style="display:none;">
+                                        <p>Are you an Admin or a Teacher? Or just a Student here to Learn?</p>
+                                        <br />
+                                        <ul class="actions">
+                                            <li><a href="#" class="button primary" onclick="chooseRole('admin'); return false;">Admin</a></li>
+                                            <li><a href="#" class="button" onclick="chooseRole('student'); return false;">Student</a></li>
+                                        </ul>
+                                    </div>
+
+                                <!-- Step 3: Admin Code -->
+                                    <div id="step-3" class="auth-step" style="display:none;">
+                                        <p>Enter the Admin Code to verify.</p>
+                                        <br />
+                                        <form onsubmit="return handleAdminCode(event)">
+                                            <div class="fields">
+                                                <div class="field">
+                                                    <label for="admin-code">Code</label>
+                                                    <input type="text" name="admin-code" id="admin-code" placeholder="Enter code" required />
+                                                </div>
+                                            </div>
+                                            <ul class="actions">
+                                                <li><input type="submit" value="Enter" class="primary" /></li>
+                                                <li><a href="#" class="button" onclick="showStep(2); return false;">Back</a></li>
+                                            </ul>
+                                        </form>
+                                    </div>
+
+                                <!-- Step 4: Signing in -->
+                                    <div id="step-4" class="auth-step" style="display:none; text-align:center; padding: 3em 0;">
+                                        <p style="font-size:1.2em;">Signing you in....</p>
+                                    </div>
+
+                            </div>
+                        </div>
+                    </section>
+
+                <!-- Footer -->
+                    <section id="footer">
+                        <div class="inner">
+                            <h2 class="major">Get in touch</h2>
+                            <p>CONTACT 071 999 1465 for more INFO</p>
+                            <ul class="contact">
+                                <li class="icon solid fa-phone">071 999 1465</li>
+                            </ul>
+                            <ul class="copyright">
+                                <li>&copy; Loving Education. All rights reserved.</li>
+                            </ul>
+                        </div>
+                    </section>
+
+            </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/jquery.min.js"></script>
+            <script src="assets/js/jquery.scrollex.min.js"></script>
+            <script src="assets/js/browser.min.js"></script>
+            <script src="assets/js/breakpoints.min.js"></script>
+            <script src="assets/js/util.js"></script>
+            <script src="assets/js/main.js"></script>
+
+        <!-- Auth logic -->
+            <script>
+                var mode = new URLSearchParams(window.location.search).get('mode') || 'signup';
+                var pendingUser = null;
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (mode === 'login') {
+                        document.getElementById('auth-title').textContent = 'Log In';
+                        document.getElementById('auth-subtitle').textContent = 'Welcome back to Loving Education';
+                    }
+
+                    var currentUser = localStorage.getItem('le-currentUser');
+                    if (currentUser) {
+                        showNotify('Already signed in as ' + currentUser);
+                    }
+                });
+
+                function showStep(n) {
+                    var steps = document.querySelectorAll('.auth-step');
+                    for (var i = 0; i < steps.length; i++) {
+                        steps[i].style.display = 'none';
+                    }
+                    document.getElementById('step-' + n).style.display = 'block';
+                }
+
+                function getUsers() {
+                    return JSON.parse(localStorage.getItem('le-users') || '{}');
+                }
+
+                function saveUsers(users) {
+                    localStorage.setItem('le-users', JSON.stringify(users));
+                }
+
+                function handleStep1(e) {
+                    e.preventDefault();
+                    var name = document.getElementById('auth-name').value.trim();
+                    var pass = document.getElementById('auth-pass').value;
+
+                    if (!name || !pass) {
+                        showNotify('Please fill in all fields');
+                        return false;
+                    }
+
+                    if (mode === 'signup') {
+                        var users = getUsers();
+                        if (users[name]) {
+                            showNotify('This name is already taken');
+                            return false;
+                        }
+                        pendingUser = { name: name, password: pass };
+                        showStep(2);
+                    } else {
+                        var users = getUsers();
+                        if (!users[name]) {
+                            showNotify('User not found');
+                            return false;
+                        }
+                        if (users[name].password !== pass) {
+                            showNotify('Wrong password');
+                            return false;
+                        }
+                        localStorage.setItem('le-currentUser', name);
+                        showStep(4);
+                        setTimeout(function() { window.location.href = 'index.html'; }, 2000);
+                    }
+                    return false;
+                }
+
+                function chooseRole(role) {
+                    if (role === 'admin') {
+                        showStep(3);
+                    } else {
+                        pendingUser.role = 'student';
+                        saveAndSignIn();
+                    }
+                }
+
+                function handleAdminCode(e) {
+                    e.preventDefault();
+                    var code = document.getElementById('admin-code').value.trim();
+                    if (code === '67531') {
+                        pendingUser.role = 'admin';
+                        saveAndSignIn();
+                    } else {
+                        showNotify('Wrong admin code');
+                        document.getElementById('admin-code').value = '';
+                    }
+                    return false;
+                }
+
+                function saveAndSignIn() {
+                    var users = getUsers();
+                    users[pendingUser.name] = {
+                        name: pendingUser.name,
+                        password: pendingUser.password,
+                        role: pendingUser.role,
+                        pfp: null
+                    };
+                    saveUsers(users);
+                    localStorage.setItem('le-currentUser', pendingUser.name);
+                    showStep(4);
+                    setTimeout(function() { window.location.href = 'index.html'; }, 2000);
+                }
+            </script>
+
+        <!-- Notification popups -->
+            <script>
+                function showNotify(msg, isHTML, redirectURL) {
+                    var old = document.querySelector('.notify-bar');
+                    if (old) old.remove();
+
+                    var bar = document.createElement('div');
+                    bar.className = 'notify-bar';
+                    if (isHTML) {
+                        bar.innerHTML = msg;
+                    } else {
+                        bar.textContent = msg;
+                    }
+                    document.body.appendChild(bar);
+
+                    setTimeout(function() { bar.classList.add('show'); }, 10);
+
+                    bar.onclick = function() { dismissNotify(bar); };
+                    setTimeout(function() { dismissNotify(bar); }, 15000);
+
+                    if (redirectURL) {
+                        setTimeout(function() {
+                            if (bar.parentNode) bar.remove();
+                            window.location.href = redirectURL;
+                        }, 3000);
+                    }
+                }
+
+                function dismissNotify(bar) {
+                    if (!bar || !bar.parentNode) return;
+                    bar.classList.remove('show');
+                    setTimeout(function() { if (bar.parentNode) bar.remove(); }, 400);
+                }
+            </script>
+
+    </body>
+</html>
