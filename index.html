@@ -98,28 +98,28 @@
                                     <p>-some of our media pages are not out yet-</p>
                                     <section class="features">
                                         <article>
-                                            <a href="#" class="image"><img src="images/pic04.jpg" alt="" /></a>
+                                            <a href="#" class="image" onclick="showNotify('Redirecting...', false, 'https://chat.whatsapp.com/IxyPW32PGXFFVcsJdnTIN3'); return false;"><img src="images/pic04.jpg" alt="" /></a>
                                             <h3 class="major">WhatsApp</h3>
                                             <p>Click to join</p>
-                                            <a href="#" class="special">Learn more</a>
+                                            <a href="#" class="special" onclick="showNotify('Redirecting...', false, 'https://chat.whatsapp.com/IxyPW32PGXFFVcsJdnTIN3'); return false;">Learn more</a>
                                         </article>
                                         <article>
-                                            <a href="#" class="image"><img src="images/pic05.jpg" alt="" /></a>
+                                            <a href="#" class="image" onclick="showNotify('Not out yet.. Try our other media\'s instead'); return false;"><img src="images/pic05.jpg" alt="" /></a>
                                             <h3 class="major">Youtube</h3>
                                             <p>Click to join</p>
-                                            <a href="#" class="special">Learn more</a>
+                                            <a href="#" class="special" onclick="showNotify('Not out yet.. Try our other media\'s instead'); return false;">Learn more</a>
                                         </article>
                                         <article>
-                                            <a href="#" class="image"><img src="images/pic06.jpg" alt="" /></a>
+                                            <a href="#" class="image" onclick="showNotify('Redirecting... An Official page of Loving Education for these platforms are <b>NOT</b> out yet, Redirecting to Channels of the <b>Owner</b> of the foundation. <b>Vidyadhi Hansana</b>', true, 'https://www.facebook.com/people/Vidyadhi-Hansana-Productions/61592936078887/?sk=reels_tab'); return false;"><img src="images/pic06.jpg" alt="" /></a>
                                             <h3 class="major">FaceBook</h3>
                                             <p>Click to join</p>
-                                            <a href="#" class="special">Learn more</a>
+                                            <a href="#" class="special" onclick="showNotify('Redirecting... An Official page of Loving Education for these platforms are <b>NOT</b> out yet, Redirecting to Channels of the <b>Owner</b> of the foundation. <b>Vidyadhi Hansana</b>', true, 'https://www.facebook.com/people/Vidyadhi-Hansana-Productions/61592936078887/?sk=reels_tab'); return false;">Learn more</a>
                                         </article>
                                         <article>
-                                            <a href="#" class="image"><img src="images/pic07.jpg" alt="" /></a>
+                                            <a href="#" class="image" onclick="showNotify('Not out yet.. Try our other media\'s instead'); return false;"><img src="images/pic07.jpg" alt="" /></a>
                                             <h3 class="major">Twitter</h3>
                                             <p>Click to join (naww ts aint happening :pray:)</p>
-                                            <a href="#" class="special">Learn more</a>
+                                            <a href="#" class="special" onclick="showNotify('Not out yet.. Try our other media\'s instead'); return false;">Learn more</a>
                                         </article>
                                     </section>
                                     <ul class="actions">
@@ -208,19 +208,30 @@
 
         <!-- Notification popups -->
             <script>
-                function showNotify(msg) {
+                function showNotify(msg, isHTML, redirectURL) {
                     var old = document.querySelector('.notify-bar');
                     if (old) old.remove();
 
                     var bar = document.createElement('div');
                     bar.className = 'notify-bar';
-                    bar.textContent = msg;
+                    if (isHTML) {
+                        bar.innerHTML = msg;
+                    } else {
+                        bar.textContent = msg;
+                    }
                     document.body.appendChild(bar);
 
                     setTimeout(function() { bar.classList.add('show'); }, 10);
 
                     bar.onclick = function() { dismissNotify(bar); };
                     setTimeout(function() { dismissNotify(bar); }, 15000);
+
+                    if (redirectURL) {
+                        setTimeout(function() {
+                            if (bar.parentNode) bar.remove();
+                            window.location.href = redirectURL;
+                        }, 3000);
+                    }
                 }
 
                 function dismissNotify(bar) {
