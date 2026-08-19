@@ -3814,14 +3814,17 @@ input, select, textarea {
 				flex-direction: row;
 			}
 
-    /* Fix: Force spotlight images to be circles */
+    /* Fix: Force spotlight images to be perfect circles */
     .wrapper.spotlight .image {
+        width: 20em;
+        height: 20em;
         border-radius: 50% !important;
         overflow: hidden;
+        flex-shrink: 0;
     }
 
     .wrapper.spotlight .image img {
-        border-radius: 50% !important;
+        border-radius: 0 !important;
         object-fit: cover;
         width: 100%;
         height: 100%;
