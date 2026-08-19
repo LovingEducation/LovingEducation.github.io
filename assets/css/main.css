@@ -3814,21 +3814,19 @@ input, select, textarea {
 				flex-direction: row;
 			}
 
-			.wrapper.spotlight .image {
-				border-radius: 100%;
-				margin: 0 3em 2em 0;
-				width: 18em;
-				height: 18em;
-				overflow: hidden;
-				-ms-flex: 1;
-			}
+    /* Fix: Force spotlight images to be circles */
+    .wrapper.spotlight .image {
+        border-radius: 50% !important;
+        overflow: hidden;
+    }
 
-				.wrapper.spotlight .image img {
-					border-radius: 100%;
-					width: 100%;
-					height: 100%;
-					object-fit: cover;
-				}
+    .wrapper.spotlight .image img {
+        border-radius: 50% !important;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
 
 			.wrapper.spotlight .content {
 				width: 100%;
