@@ -89,7 +89,6 @@
 
         <!-- Past Papers Logic -->
             <script>
-                // Firebase init
                 firebase.initializeApp({
                     apiKey: "AIzaSyC0l_7ENdicpO1R_O2h9nEYtSaTMpsyzoQ",
                     authDomain: "loving-education.firebaseapp.com",
@@ -100,10 +99,9 @@
                 });
                 var db = firebase.firestore();
 
-                // Cloudinary config
                 var CLOUD_NAME = 'pq8zxaw5';
                 var UPLOAD_PRESET = 'loving_education_unsigned';
-                var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/auto/upload';
+                var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/raw/upload';
 
                 var gradeKeys = ['6', '7', '8'];
                 var gradeNames = { '6': '6th Grade', '7': '7th Grade', '8': '8th Grade' };
@@ -152,9 +150,7 @@
                     role: null
                 };
 
-                function setStep(html) {
-                    document.getElementById('step-content').innerHTML = html;
-                }
+                function setStep(html) { document.getElementById('step-content').innerHTML = html; }
 
                 function backBtn(text, fn) {
                     return '<a href="#" class="button" onclick="' + fn + '(); return false;" style="display:inline-block; margin-bottom:1.5em;">&larr; ' + text + '</a>';
@@ -324,7 +320,10 @@
                     formData.append('folder', 'past-papers/' + state.grade + '/' + state.subjectKey);
 
                     fetch(CLOUDINARY_URL, { method: 'POST', body: formData })
-                        .then(function(res) { return res.json(); })
+                        .then(function(res) {
+                            if (!res.ok) return res.text().then(function(t) { throw new Error(t); });
+                            return res.json();
+                        })
                         .then(function(data) {
                             if (data.secure_url) {
                                 var paperData = {
@@ -340,7 +339,7 @@
                                 };
                                 return db.collection('papers').add(paperData);
                             } else {
-                                throw new Error('No URL returned');
+                                throw new Error('No URL returned from Cloudinary');
                             }
                         })
                         .then(function() {
@@ -373,7 +372,6 @@
                     }
                 }
 
-                // Init
                 document.addEventListener('DOMContentLoaded', function() {
                     var currentUser = localStorage.getItem('le-currentUser');
                     if (!currentUser) { window.location.href = 'auth.html?mode=login'; return; }
