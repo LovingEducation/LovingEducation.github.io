@@ -1,0 +1,432 @@
+<!DOCTYPE HTML>
+<!--
+    Solid State by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+    <head>
+        <title>Past Papers - Loving Education</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="icon" type="image/png" href="images/favicon.png" />
+        <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    </head>
+    <body class="is-preload">
+
+        <!-- Page Wrapper -->
+            <div id="page-wrapper">
+
+                <!-- Header -->
+                    <header id="header">
+                        <h1><a href="index.html">Loving Education</a></h1>
+                        <nav>
+                            <a href="generic.html" class="button">Start Learning</a>
+                            <a href="#menu">Menu</a>
+                        </nav>
+                    </header>
+
+                <!-- Menu -->
+                    <nav id="menu">
+                        <div class="inner">
+                            <h2>Menu</h2>
+                            <ul class="links">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="generic.html">Learn</a></li>
+                                <li><a href="auth.html?mode=login">Log In</a></li>
+                                <li><a href="auth.html?mode=signup">Sign Up</a></li>
+                                <li><a href="profile.html">Profile</a></li>
+                            </ul>
+                            <a href="#" class="close">Close</a>
+                        </div>
+                    </nav>
+
+                <!-- Wrapper -->
+                    <section id="wrapper">
+                        <header>
+                            <div class="inner">
+                                <h2>Past Papers</h2>
+                                <p>Find and practice with real exam papers</p>
+                            </div>
+                        </header>
+
+                        <div class="wrapper">
+                            <div class="inner">
+                                <div id="step-content"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                <!-- Footer -->
+                    <section id="footer">
+                        <div class="inner">
+                            <h2 class="major">Get in touch</h2>
+                            <p>CONTACT 071 999 1465 for more INFO</p>
+                            <ul class="contact">
+                                <li class="icon solid fa-phone">071 999 1465</li>
+                            </ul>
+                            <ul class="copyright">
+                                <li>&copy; Loving Education. All rights reserved.</li>
+                            </ul>
+                        </div>
+                    </section>
+
+            </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/jquery.min.js"></script>
+            <script src="assets/js/jquery.scrollex.min.js"></script>
+            <script src="assets/js/browser.min.js"></script>
+            <script src="assets/js/breakpoints.min.js"></script>
+            <script src="assets/js/util.js"></script>
+            <script src="assets/js/main.js"></script>
+
+        <!-- Past Papers Logic -->
+            <script>
+                var subjectKeys = ['english', 'mathematics', 'science', 'sinhala', 'civic', 'geography', 'tamil', 'aesthetic', 'health-science', 'history', 'buddhism', 'pts'];
+                var aestheticKeys = ['art', 'dancing', 'western-music', 'eastern-music', 'drama'];
+                var termKeys = ['first', 'second', 'third'];
+
+                var subjectNames = {
+                    english: { english: 'English', sinhala: 'ඉංග්රීසි' },
+                    mathematics: { english: 'Mathematics', sinhala: 'ගණිතය' },
+                    science: { english: 'Science', sinhala: 'විද්‍යාව' },
+                    sinhala: { english: 'Sinhala', sinhala: 'සිංහල' },
+                    civic: { english: 'Civic', sinhala: 'පුරවැසි අධ්‍යාපනය' },
+                    geography: { english: 'Geography', sinhala: 'භූගෝලය' },
+                    tamil: { english: 'Tamil', sinhala: 'දෙමළ' },
+                    aesthetic: { english: 'Aesthetic', sinhala: 'සෞන්දර්ය' },
+                    'health-science': { english: 'Health Science', sinhala: 'සෞඛ්‍ය විද්‍යාව' },
+                    history: { english: 'History', sinhala: 'ඉතිහාසය' },
+                    buddhism: { english: 'Buddhism', sinhala: 'බුද්ධාගම' },
+                    pts: { english: 'PTS', sinhala: 'PTS' }
+                };
+
+                var aestheticNames = {
+                    art: { english: 'Art', sinhala: 'කලා' },
+                    dancing: { english: 'Dancing', sinhala: 'නැටුම්' },
+                    'western-music': { english: 'Western Music', sinhala: 'බටහිර සංගීතය' },
+                    'eastern-music': { english: 'Eastern Music', sinhala: 'නැගෙනහිර සංගීතය' },
+                    drama: { english: 'Drama', sinhala: 'නාට්‍ය' }
+                };
+
+                var termNames = {
+                    first: { english: 'First Term', sinhala: 'පළමු වාරය' },
+                    second: { english: 'Second Term', sinhala: 'දෙවන වාරය' },
+                    third: { english: 'Third Term', sinhala: 'තුන්වන වාරය' }
+                };
+
+                var state = {
+                    medium: null,
+                    subjectKey: null,
+                    aestheticKey: null,
+                    termKey: null,
+                    mode: null,
+                    uploadName: null,
+                    role: null
+                };
+
+                function getPapers() {
+                    try { return JSON.parse(localStorage.getItem('le-papers') || '[]'); }
+                    catch(e) { return []; }
+                }
+
+                function savePapers(papers) {
+                    localStorage.setItem('le-papers', JSON.stringify(papers));
+                }
+
+                function setStep(html) {
+                    document.getElementById('step-content').innerHTML = html;
+                }
+
+                function backBtn(text, fn) {
+                    return '<a href="#" class="button" onclick="' + fn + '(); return false;" style="display:inline-block; margin-bottom:1.5em;">&larr; ' + text + '</a>';
+                }
+
+                function stripBlock(name, fn) {
+                    return '<a href="#" onclick="' + fn + '(); return false;" style="display:block; background:#000000; color:#ffffff; padding:1em 1.5em; text-decoration:none; border-bottom:none; margin-bottom:0.5em; border-radius:5px; transition:background 0.2s;" onmouseover="this.style.background=\'#444444\'" onmouseout="this.style.background=\'#000000\'">' + name + '</a>';
+                }
+
+                function paperStrip(name, dataUrl) {
+                    return '<a href="' + dataUrl + '" download="' + name + '.pdf" style="display:block; padding:1em 1.5em; text-decoration:none; border-bottom:none; margin-bottom:0.5em; border-radius:5px; border:2px solid; border-image:linear-gradient(to right, #22c55e, #eab308) 1; color:#ffffff; background:rgba(255,255,255,0.025); transition:background 0.2s;" onmouseover="this.style.background=\'rgba(255,255,255,0.06)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.025)\'">' + name + '</a>';
+                }
+
+                function showMediumSelect() {
+                    state.medium = null;
+                    state.subjectKey = null;
+                    state.aestheticKey = null;
+                    state.termKey = null;
+                    var h = backBtn('Back', 'goBack');
+                    h += '<h3 class="major">Select Medium</h3>';
+                    h += stripBlock('English', "pickMedium('english')");
+                    h += stripBlock('සිංහල', "pickMedium('sinhala')");
+                    setStep(h);
+                }
+
+                function pickMedium(m) {
+                    state.medium = m;
+                    showSubjectSelect();
+                }
+
+                function showSubjectSelect() {
+                    var h = backBtn('Back', 'showMediumSelect');
+                    h += '<h3 class="major">Select Subject</h3>';
+                    for (var i = 0; i < subjectKeys.length; i++) {
+                        var key = subjectKeys[i];
+                        var name = subjectNames[key][state.medium];
+                        h += stripBlock(name, "pickSubject('" + key + "')");
+                    }
+                    setStep(h);
+                }
+
+                function pickSubject(key) {
+                    state.subjectKey = key;
+                    if (key === 'aesthetic') {
+                        showAestheticSelect();
+                    } else {
+                        showTermSelect();
+                    }
+                }
+
+                function showAestheticSelect() {
+                    var h = backBtn('Back', 'showSubjectSelect');
+                    h += '<h3 class="major">Select Aesthetic Subject</h3>';
+                    for (var i = 0; i < aestheticKeys.length; i++) {
+                        var key = aestheticKeys[i];
+                        var name = aestheticNames[key][state.medium];
+                        h += stripBlock(name, "pickAesthetic('" + key + "')");
+                    }
+                    setStep(h);
+                }
+
+                function pickAesthetic(key) {
+                    state.aestheticKey = key;
+                    showTermSelect();
+                }
+
+                function showTermSelect() {
+                    var h = backBtn('Back', 'state.subjectKey === \'aesthetic\' ? showAestheticSelect : showSubjectSelect');
+                    h += '<h3 class="major">Select Term</h3>';
+                    for (var i = 0; i < termKeys.length; i++) {
+                        var key = termKeys[i];
+                        var name = termNames[key][state.medium];
+                        h += stripBlock(name, "pickTerm('" + key + "')");
+                    }
+                    setStep(h);
+                }
+
+                function pickTerm(key) {
+                    state.termKey = key;
+                    if (state.mode === 'upload') {
+                        showUploadFile();
+                    } else {
+                        showPapers();
+                    }
+                }
+
+                function showPapers() {
+                    var papers = getPapers();
+                    var filtered = [];
+                    for (var i = 0; i < papers.length; i++) {
+                        var p = papers[i];
+                        if (p.medium === state.medium && p.subjectKey === state.subjectKey && p.termKey === state.termKey) {
+                            if (state.subjectKey === 'aesthetic') {
+                                if (p.aestheticKey === state.aestheticKey) filtered.push(p);
+                            } else {
+                                filtered.push(p);
+                            }
+                        }
+                    }
+
+                    var h = backBtn('Back', 'showTermSelect');
+                    if (filtered.length === 0) {
+                        h += '<p style="text-align:center; opacity:0.5; padding:2em 0;">Unable to find Papers</p>';
+                    } else {
+                        for (var i = 0; i < filtered.length; i++) {
+                            h += paperStrip(filtered[i].name, filtered[i].fileData);
+                        }
+                    }
+                    setStep(h);
+                }
+
+                function showAdminChoice() {
+                    var h = backBtn('Back', "window.location.href='generic.html'");
+                    h += '<h3 class="major">What would you like to do?</h3>';
+                    h += '<p style="margin-bottom:1.5em;">Are you here to moderate this section, or just browsing?</p>';
+                    h += '<ul class="actions">';
+                    h += '<li><a href="#" class="button primary" onclick="startUpload(); return false;">Moderate</a></li>';
+                    h += '<li><a href="#" class="button" onclick="startBrowse(); return false;">Just Browsing</a></li>';
+                    h += '</ul>';
+                    setStep(h);
+                }
+
+                function startUpload() {
+                    state.mode = 'upload';
+                    showUploadName();
+                }
+
+                function startBrowse() {
+                    state.mode = 'browse';
+                    showMediumSelect();
+                }
+
+                function showUploadName() {
+                    var h = backBtn('Back', 'showAdminChoice');
+                    h += '<h3 class="major">Name Your Paper</h3>';
+                    h += '<p style="margin-bottom:1em;">Use an appropriate name with year and province (e.g. "2024 Western Province")</p>';
+                    h += '<form onsubmit="return submitUploadName(event)">';
+                    h += '<div class="fields"><div class="field">';
+                    h += '<label for="paper-name">Paper Name</label>';
+                    h += '<input type="text" name="paper-name" id="paper-name" placeholder="e.g. 2024 Western Province" required />';
+                    h += '</div></div>';
+                    h += '<ul class="actions"><li><input type="submit" value="Next" class="primary" /></li></ul>';
+                    h += '</form>';
+                    setStep(h);
+                }
+
+                function submitUploadName(e) {
+                    e.preventDefault();
+                    state.uploadName = document.getElementById('paper-name').value.trim();
+                    if (!state.uploadName) { showNotify('Please enter a name'); return false; }
+                    showMediumSelect();
+                    return false;
+                }
+
+                function showUploadFile() {
+                    var subjectLabel = subjectNames[state.subjectKey][state.medium];
+                    if (state.subjectKey === 'aesthetic') {
+                        subjectLabel += ' - ' + aestheticNames[state.aestheticKey][state.medium];
+                    }
+                    var termLabel = termNames[state.termKey][state.medium];
+                    var mediumLabel = state.medium === 'english' ? 'English' : 'සිංහල';
+
+                    var h = backBtn('Back', 'showTermSelect');
+                    h += '<h3 class="major">Upload Paper</h3>';
+                    h += '<div class="box" style="margin-bottom:1.5em;">';
+                    h += '<p><strong>Name:</strong> ' + state.uploadName + '</p>';
+                    h += '<p><strong>Medium:</strong> ' + mediumLabel + '</p>';
+                    h += '<p><strong>Subject:</strong> ' + subjectLabel + '</p>';
+                    h += '<p><strong>Term:</strong> ' + termLabel + '</p>';
+                    h += '</div>';
+                    h += '<form onsubmit="return submitUploadFile(event)">';
+                    h += '<div class="fields"><div class="field">';
+                    h += '<label for="paper-file">Select PDF</label>';
+                    h += '<input type="file" name="paper-file" id="paper-file" accept=".pdf" required />';
+                    h += '</div></div>';
+                    h += '<ul class="actions"><li><input type="submit" value="Upload Paper" class="primary" id="upload-btn" /></li></ul>';
+                    h += '</form>';
+                    setStep(h);
+                }
+
+                function submitUploadFile(e) {
+                    e.preventDefault();
+                    var fileInput = document.getElementById('paper-file');
+                    var file = fileInput.files[0];
+                    if (!file) { showNotify('Please select a file'); return false; }
+
+                    if (file.size > 3 * 1024 * 1024) {
+                        showNotify('File too large. Max 3MB.');
+                        return false;
+                    }
+
+                    var btn = document.getElementById('upload-btn');
+                    btn.value = 'Uploading paper...';
+                    btn.disabled = true;
+
+                    var reader = new FileReader();
+                    reader.onload = function(ev) {
+                        var papers = getPapers();
+                        papers.push({
+                            name: state.uploadName,
+                            medium: state.medium,
+                            subjectKey: state.subjectKey,
+                            aestheticKey: state.aestheticKey || null,
+                            termKey: state.termKey,
+                            fileData: ev.target.result,
+                            uploadedBy: localStorage.getItem('le-currentUser'),
+                            uploadedAt: new Date().toISOString()
+                        });
+                        try {
+                            savePapers(papers);
+                            showNotify('Paper uploaded successfully!');
+                            setTimeout(function() { showAdminChoice(); }, 1500);
+                        } catch(err) {
+                            showNotify('Storage full. Try deleting some papers or uploading a smaller file.');
+                            btn.value = 'Upload Paper';
+                            btn.disabled = false;
+                        }
+                    };
+                    reader.onerror = function() {
+                        showNotify('Failed to read file');
+                        btn.value = 'Upload Paper';
+                        btn.disabled = false;
+                    };
+                    reader.readAsDataURL(file);
+                    return false;
+                }
+
+                function goBack() {
+                    if (state.mode === 'upload') {
+                        if (state.termKey) { showTermSelect(); }
+                        else if (state.subjectKey === 'aesthetic' && state.aestheticKey) { showAestheticSelect(); }
+                        else if (state.subjectKey) { showSubjectSelect(); }
+                        else if (state.uploadName) { showUploadName(); }
+                        else { showAdminChoice(); }
+                    } else {
+                        window.location.href = 'generic.html';
+                    }
+                }
+
+                // Init
+                document.addEventListener('DOMContentLoaded', function() {
+                    var currentUser = localStorage.getItem('le-currentUser');
+                    if (!currentUser) {
+                        window.location.href = 'auth.html?mode=login';
+                        return;
+                    }
+                    var users = JSON.parse(localStorage.getItem('le-users') || '{}');
+                    var user = users[currentUser];
+                    if (!user) {
+                        window.location.href = 'auth.html?mode=login';
+                        return;
+                    }
+                    state.role = user.role;
+                    if (user.role === 'admin') {
+                        showAdminChoice();
+                    } else {
+                        state.mode = 'browse';
+                        showMediumSelect();
+                    }
+                });
+            </script>
+
+        <!-- Notification popups -->
+            <script>
+                function showNotify(msg, isHTML, redirectURL) {
+                    var old = document.querySelector('.notify-bar');
+                    if (old) old.remove();
+                    var bar = document.createElement('div');
+                    bar.className = 'notify-bar';
+                    if (isHTML) { bar.innerHTML = msg; } else { bar.textContent = msg; }
+                    document.body.appendChild(bar);
+                    setTimeout(function() { bar.classList.add('show'); }, 10);
+                    bar.onclick = function() { dismissNotify(bar); };
+                    setTimeout(function() { dismissNotify(bar); }, 15000);
+                    if (redirectURL) {
+                        setTimeout(function() {
+                            if (bar.parentNode) bar.remove();
+                            window.location.href = redirectURL;
+                        }, 3000);
+                    }
+                }
+                function dismissNotify(bar) {
+                    if (!bar || !bar.parentNode) return;
+                    bar.classList.remove('show');
+                    setTimeout(function() { if (bar.parentNode) bar.remove(); }, 400);
+                }
+            </script>
+
+    </body>
+</html>
