@@ -54,7 +54,7 @@
 
                         <div class="wrapper">
                             <div class="inner">
-                                <div id="step-content"></div>
+                                <div id="step-content"><p style="text-align:center; opacity:0.5;">Loading...</p></div>
                             </div>
                         </div>
                     </section>
@@ -75,6 +75,10 @@
 
             </div>
 
+        <!-- Firebase SDKs -->
+            <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
         <!-- Scripts -->
             <script src="assets/js/jquery.min.js"></script>
             <script src="assets/js/jquery.scrollex.min.js"></script>
@@ -85,6 +89,18 @@
 
         <!-- Past Papers Logic -->
             <script>
+                // Firebase init
+                var firebaseConfig = {
+                    apiKey: "AIzaSyC0l_7ENdicpO1R_O2h9nEYtSaTMpsyzoQ",
+                    authDomain: "loving-education.firebaseapp.com",
+                    projectId: "loving-education",
+                    storageBucket: "loving-education.firebasestorage.app",
+                    messagingSenderId: "917807733153",
+                    appId: "1:917807733153:web:3bb5da5b5a7ae9088593e0"
+                };
+                firebase.initializeApp(firebaseConfig);
+                var db = firebase.firestore();
+
                 var gradeKeys = ['6', '7', '8'];
                 var gradeNames = { '6': '6th Grade', '7': '7th Grade', '8': '8th Grade' };
 
@@ -131,15 +147,6 @@
                     uploadName: null,
                     role: null
                 };
-
-                function getPapers() {
-                    try { return JSON.parse(localStorage.getItem('le-papers') || '[]'); }
-                    catch(e) { return []; }
-                }
-
-                function savePapers(papers) {
-                    localStorage.setItem('le-papers', JSON.stringify(papers));
-                }
 
                 function setStep(html) {
                     document.getElementById('step-content').innerHTML = html;
@@ -251,28 +258,30 @@
                 }
 
                 function showPapers() {
-                    var papers = getPapers();
-                    var filtered = [];
-                    for (var i = 0; i < papers.length; i++) {
-                        var p = papers[i];
-                        if (p.grade === state.grade && p.medium === state.medium && p.subjectKey === state.subjectKey && p.termKey === state.termKey) {
-                            if (state.subjectKey === 'aesthetic') {
-                                if (p.aestheticKey === state.aestheticKey) filtered.push(p);
-                            } else {
-                                filtered.push(p);
-                            }
-                        }
-                    }
+                    setStep('<p style="text-align:center; opacity:0.5;">Loading papers...</p>');
 
-                    var h = backBtn('Back', 'showTermSelect');
-                    if (filtered.length === 0) {
-                        h += '<p style="text-align:center; opacity:0.5; padding:2em 0;">Unable to find Papers</p>';
-                    } else {
-                        for (var i = 0; i < filtered.length; i++) {
-                            h += paperStrip(filtered[i].name, filtered[i].fileData);
+                    var query = db.collection('papers')
+                        .where('grade', '==', state.grade)
+                        .where('medium', '==', state.medium)
+                        .where('subjectKey', '==', state.subjectKey)
+                        .where('termKey', '==', state.termKey);
+
+                    query.get().then(function(snapshot) {
+                        var h = backBtn('Back', 'showTermSelect');
+                        var count = 0;
+                        snapshot.forEach(function(doc) {
+                            var p = doc.data();
+                            if (state.subjectKey === 'aesthetic' && p.aestheticKey !== state.aestheticKey) return;
+                            h += paperStrip(p.name, p.fileData);
+                            count++;
+                        });
+                        if (count === 0) {
+                            h += '<p style="text-align:center; opacity:0.5; padding:2em 0;">Unable to find Papers</p>';
                         }
-                    }
-                    setStep(h);
+                        setStep(h);
+                    }).catch(function(err) {
+                        setStep(backBtn('Back', 'showTermSelect') + '<p style="text-align:center; opacity:0.5; padding:2em 0;">Error loading papers</p>');
+                    });
                 }
 
                 function showAdminChoice() {
@@ -336,6 +345,7 @@
                     h += '<p><strong>Subject:</strong> ' + subjectLabel + '</p>';
                     h += '<p><strong>Term:</strong> ' + termLabel + '</p>';
                     h += '</div>';
+                    h += '<p style="margin-bottom:1em; opacity:0.6; font-size:0.85em;">Max file size: 500KB (Firestore limit)</p>';
                     h += '<form onsubmit="return submitUploadFile(event)">';
                     h += '<div class="fields"><div class="field">';
                     h += '<label for="paper-file">Select PDF</label>';
@@ -352,8 +362,8 @@
                     var file = fileInput.files[0];
                     if (!file) { showNotify('Please select a file'); return false; }
 
-                    if (file.size > 3 * 1024 * 1024) {
-                        showNotify('File too large. Max 3MB.');
+                    if (file.size > 500 * 1024) {
+                        showNotify('File too large. Max 500KB.');
                         return false;
                     }
 
@@ -363,8 +373,7 @@
 
                     var reader = new FileReader();
                     reader.onload = function(ev) {
-                        var papers = getPapers();
-                        papers.push({
+                        var paperData = {
                             name: state.uploadName,
                             grade: state.grade,
                             medium: state.medium,
@@ -373,17 +382,17 @@
                             termKey: state.termKey,
                             fileData: ev.target.result,
                             uploadedBy: localStorage.getItem('le-currentUser'),
-                            uploadedAt: new Date().toISOString()
-                        });
-                        try {
-                            savePapers(papers);
+                            uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+
+                        db.collection('papers').add(paperData).then(function() {
                             showNotify('Paper uploaded successfully!');
                             setTimeout(function() { showAdminChoice(); }, 1500);
-                        } catch(err) {
-                            showNotify('Storage full. Try deleting some papers or uploading a smaller file.');
+                        }).catch(function(err) {
+                            showNotify('Upload failed: ' + err.message);
                             btn.value = 'Upload Paper';
                             btn.disabled = false;
-                        }
+                        });
                     };
                     reader.onerror = function() {
                         showNotify('Failed to read file');
