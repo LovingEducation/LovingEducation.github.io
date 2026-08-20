@@ -161,9 +161,7 @@
                 }
 
                 function paperStrip(name, url) {
-                    var downloadUrl = url.replace('/upload/', '/upload/fl_attachment/');
-                    return '<a href="' + downloadUrl + '" style="display:block; padding:1em 1.5em; text-decoration:none; border-bottom:none; margin-bottom:0.5em; border-radius:5px; border:2px solid; border-image:linear-gradient(to right, #22c55e, #eab308) 1; color:#ffffff; background:rgba(255,255,255,0.025); transition:background 0.2s;" onmouseover="this.style.background=\'rgba(255,255,255,0.06)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.025)\'">' + name + '</a>';
-                }
+                    var downloadUrl = url;
 
                 function showGradeSelect() {
                     state.grade = null; state.medium = null; state.subjectKey = null; state.aestheticKey = null; state.termKey = null;
