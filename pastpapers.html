@@ -85,6 +85,9 @@
 
         <!-- Past Papers Logic -->
             <script>
+                var gradeKeys = ['6', '7', '8'];
+                var gradeNames = { '6': '6th Grade', '7': '7th Grade', '8': '8th Grade' };
+
                 var subjectKeys = ['english', 'mathematics', 'science', 'sinhala', 'civic', 'geography', 'tamil', 'aesthetic', 'health-science', 'history', 'buddhism', 'pts'];
                 var aestheticKeys = ['art', 'dancing', 'western-music', 'eastern-music', 'drama'];
                 var termKeys = ['first', 'second', 'third'];
@@ -119,6 +122,7 @@
                 };
 
                 var state = {
+                    grade: null,
                     medium: null,
                     subjectKey: null,
                     aestheticKey: null,
@@ -153,12 +157,32 @@
                     return '<a href="' + dataUrl + '" download="' + name + '.pdf" style="display:block; padding:1em 1.5em; text-decoration:none; border-bottom:none; margin-bottom:0.5em; border-radius:5px; border:2px solid; border-image:linear-gradient(to right, #22c55e, #eab308) 1; color:#ffffff; background:rgba(255,255,255,0.025); transition:background 0.2s;" onmouseover="this.style.background=\'rgba(255,255,255,0.06)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.025)\'">' + name + '</a>';
                 }
 
-                function showMediumSelect() {
+                function showGradeSelect() {
+                    state.grade = null;
                     state.medium = null;
                     state.subjectKey = null;
                     state.aestheticKey = null;
                     state.termKey = null;
                     var h = backBtn('Back', 'goBack');
+                    h += '<h3 class="major">Select Grade</h3>';
+                    for (var i = 0; i < gradeKeys.length; i++) {
+                        var key = gradeKeys[i];
+                        h += stripBlock(gradeNames[key], "pickGrade('" + key + "')");
+                    }
+                    setStep(h);
+                }
+
+                function pickGrade(g) {
+                    state.grade = g;
+                    showMediumSelect();
+                }
+
+                function showMediumSelect() {
+                    state.medium = null;
+                    state.subjectKey = null;
+                    state.aestheticKey = null;
+                    state.termKey = null;
+                    var h = backBtn('Back', 'showGradeSelect');
                     h += '<h3 class="major">Select Medium</h3>';
                     h += stripBlock('English', "pickMedium('english')");
                     h += stripBlock('සිංහල', "pickMedium('sinhala')");
@@ -231,7 +255,7 @@
                     var filtered = [];
                     for (var i = 0; i < papers.length; i++) {
                         var p = papers[i];
-                        if (p.medium === state.medium && p.subjectKey === state.subjectKey && p.termKey === state.termKey) {
+                        if (p.grade === state.grade && p.medium === state.medium && p.subjectKey === state.subjectKey && p.termKey === state.termKey) {
                             if (state.subjectKey === 'aesthetic') {
                                 if (p.aestheticKey === state.aestheticKey) filtered.push(p);
                             } else {
@@ -269,7 +293,7 @@
 
                 function startBrowse() {
                     state.mode = 'browse';
-                    showMediumSelect();
+                    showGradeSelect();
                 }
 
                 function showUploadName() {
@@ -290,11 +314,12 @@
                     e.preventDefault();
                     state.uploadName = document.getElementById('paper-name').value.trim();
                     if (!state.uploadName) { showNotify('Please enter a name'); return false; }
-                    showMediumSelect();
+                    showGradeSelect();
                     return false;
                 }
 
                 function showUploadFile() {
+                    var gradeLabel = gradeNames[state.grade];
                     var subjectLabel = subjectNames[state.subjectKey][state.medium];
                     if (state.subjectKey === 'aesthetic') {
                         subjectLabel += ' - ' + aestheticNames[state.aestheticKey][state.medium];
@@ -306,6 +331,7 @@
                     h += '<h3 class="major">Upload Paper</h3>';
                     h += '<div class="box" style="margin-bottom:1.5em;">';
                     h += '<p><strong>Name:</strong> ' + state.uploadName + '</p>';
+                    h += '<p><strong>Grade:</strong> ' + gradeLabel + '</p>';
                     h += '<p><strong>Medium:</strong> ' + mediumLabel + '</p>';
                     h += '<p><strong>Subject:</strong> ' + subjectLabel + '</p>';
                     h += '<p><strong>Term:</strong> ' + termLabel + '</p>';
@@ -340,6 +366,7 @@
                         var papers = getPapers();
                         papers.push({
                             name: state.uploadName,
+                            grade: state.grade,
                             medium: state.medium,
                             subjectKey: state.subjectKey,
                             aestheticKey: state.aestheticKey || null,
@@ -372,10 +399,16 @@
                         if (state.termKey) { showTermSelect(); }
                         else if (state.subjectKey === 'aesthetic' && state.aestheticKey) { showAestheticSelect(); }
                         else if (state.subjectKey) { showSubjectSelect(); }
+                        else if (state.medium) { showMediumSelect(); }
+                        else if (state.grade) { showGradeSelect(); }
                         else if (state.uploadName) { showUploadName(); }
                         else { showAdminChoice(); }
                     } else {
-                        window.location.href = 'generic.html';
+                        if (state.termKey) { showTermSelect(); }
+                        else if (state.subjectKey === 'aesthetic' && state.aestheticKey) { showAestheticSelect(); }
+                        else if (state.subjectKey) { showSubjectSelect(); }
+                        else if (state.medium) { showMediumSelect(); }
+                        else { window.location.href = 'generic.html'; }
                     }
                 }
 
@@ -397,7 +430,7 @@
                         showAdminChoice();
                     } else {
                         state.mode = 'browse';
-                        showMediumSelect();
+                        showGradeSelect();
                     }
                 });
             </script>
